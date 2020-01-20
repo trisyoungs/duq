@@ -74,7 +74,7 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	// Return Configuration in which the Species are used
 	Configuration* configuration() const;
 	// Add Isotopologue with the specified relative weight
-	void add(Isotopologue* iso, double relativeWeight);
+	void add(const Isotopologue* iso, double relativeWeight);
 	// Remove specified Species from the list (if it exists)
 	void remove(Species* sp);
 	// Remove any occurrences of the specified Isotopologue

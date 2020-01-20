@@ -233,7 +233,7 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
 	if (!topeWeight) return;
 
 	// Column of passed item tells us the type of data we need to change
-	Isotopologue* iso;
+	const Isotopologue* iso;
 	switch (column)
 	{
 		// Isotopologue

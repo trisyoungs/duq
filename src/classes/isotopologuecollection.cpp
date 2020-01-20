@@ -61,7 +61,7 @@ void IsotopologueCollection::clear()
 }
 
 // Add Isotopologue weight for the specified Configuration / Species
-void IsotopologueCollection::add(Configuration* cfg, Isotopologue* iso, double relativeWeight)
+void IsotopologueCollection::add(Configuration* cfg, const Isotopologue* iso, double relativeWeight)
 {
 	// Check if the set already exists
 	IsotopologueSet* set = NULL;

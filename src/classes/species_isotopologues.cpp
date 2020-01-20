@@ -24,21 +24,14 @@
 #include <string.h>
 
 // Update current Isotopologues
-void Species::updateIsotopologues()
+void Species::updateNaturalIsotopologues()
 {
-	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update();
+	naturalIsotopologue_.update();
 }
 
 // Update and return natural isotopologue
-Isotopologue* Species::naturalIsotopologue()
+const Isotopologue* Species::naturalIsotopologue() const
 {
-	if (naturalIsotopologuePoint_ != atomTypesVersion_)
-	{
-		naturalIsotopologue_.update();
-
-		naturalIsotopologuePoint_ = atomTypesVersion_;
-	}
-
 	return &naturalIsotopologue_;
 }
 
@@ -120,7 +113,7 @@ const char* Species::uniqueIsotopologueName(const char* base, const Isotopologue
 }
 
 // Search for Isotopologue by name
-Isotopologue* Species::findIsotopologue(const char* name)
+const Isotopologue* Species::findIsotopologue(const char* name) const
 {
 	// Check for the natural Isotopologue
 	if (DissolveSys::sameString("Natural", name)) return naturalIsotopologue();

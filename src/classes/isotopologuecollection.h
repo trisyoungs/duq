@@ -59,7 +59,7 @@ class IsotopologueCollection : public GenericItemBase
 	// Clear all existing data
 	void clear();
 	// Add Isotopologue weight for the specified Configuration / Species
-	void add(Configuration* cfg, Isotopologue* iso, double relativeWeight);
+	void add(Configuration* cfg, const Isotopologue* iso, double relativeWeight);
 	// Remove the specified set from the collection
 	void remove(IsotopologueSet* set);
 	// Remove the Configuration from the collection

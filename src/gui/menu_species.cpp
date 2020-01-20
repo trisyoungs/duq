@@ -39,6 +39,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 	Species* newSpecies = dissolve_.addSpecies();
 	newSpecies->addAtom(el, Vec3<double>());
 	newSpecies->setName(dissolve_.coreData().uniqueSpeciesName(el->symbol()));
+	newSpecies->updateNaturalIsotopologue();
 
 	setModified();
 	fullUpdate();
@@ -52,6 +53,8 @@ void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 	EditSpeciesDialog editSpeciesDialog(this, newSpecies);
 	if (editSpeciesDialog.editSpecies())
 	{
+		newSpecies->updateNaturalIsotopologue();
+
 		setModified();
 		fullUpdate();
 		ui_.MainTabs->setCurrentTab(newSpecies);

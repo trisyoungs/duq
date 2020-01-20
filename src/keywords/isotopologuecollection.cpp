@@ -80,7 +80,7 @@ bool IsotopologueCollectionKeyword::read(LineParser& parser, int startArg, const
 	if (!sp) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(startArg+1));
 
 	// Finally, locate isotopologue definition for species (third argument)
-	Isotopologue* iso = sp->findIsotopologue(parser.argc(startArg+2));
+	const Isotopologue* iso = sp->findIsotopologue(parser.argc(startArg+2));
 	if (!iso) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(startArg+2), sp->name());
 
 	// Add the isotopologue to the collection

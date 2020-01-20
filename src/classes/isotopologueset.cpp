@@ -79,7 +79,7 @@ Configuration* IsotopologueSet::configuration() const
 }
 
 // Add Isotopologue with the specified relative weight
-void IsotopologueSet::add(Isotopologue* iso, double relativeWeight)
+void IsotopologueSet::add(const Isotopologue* iso, double relativeWeight)
 {
 	// Find the parent Species of the isotopologue in our list
 	Isotopologues* topes = NULL;

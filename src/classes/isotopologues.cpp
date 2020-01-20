@@ -240,7 +240,7 @@ bool Isotopologues::read(LineParser& parser, const CoreData& coreData)
 		if (parser.getArgsDelim() != LineParser::Success) return false;
 
 		// Search for the named Isotopologue in the Species
-		Isotopologue* iso = species_->findIsotopologue(parser.argc(0));
+		const Isotopologue* iso = species_->findIsotopologue(parser.argc(0));
 		if (!iso)
 		{
 			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading Isotopologues.\n", parser.argc(0), species_->name());
