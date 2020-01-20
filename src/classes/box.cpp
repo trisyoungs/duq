@@ -86,6 +86,18 @@ Box::BoxType Box::type() const
 	return type_;
 }
 
+// Return whether the Box is periodic
+bool Box::isPeriodic() const
+{
+	return type_ != NonPeriodicBoxType;
+}
+
+// Return whether the Box is non-periodic
+bool Box::isNonPeriodic() const
+{
+	return type_ == NonPeriodicBoxType;
+}
+
 // Finalise Box, storing volume and reciprocal and inverted axes
 void Box::finalise()
 {

@@ -87,6 +87,10 @@ class Box
 	void finalise();
 	// Return Box type
 	BoxType type() const;
+	// Return whether the Box is periodic
+	bool isPeriodic() const;
+	// Return whether the Box is non-periodic
+	bool isNonPeriodic() const;
 	// Return volume
 	double volume() const;
 	// Return axis lengths
