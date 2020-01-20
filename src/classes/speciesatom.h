@@ -87,7 +87,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return charge of Atom
 	double charge() const;
 	// Set AtomType of Atom
-	void setAtomType(AtomType* at);
+	bool setAtomType(AtomType* at);
 	// Return AtomType of Atom
 	AtomType* atomType() const;
 	// Set List index (0->[N-1])

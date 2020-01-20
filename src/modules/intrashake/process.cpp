@@ -100,12 +100,15 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
 		{
-			Species* sp = spInfo->species();
+			const Species* sp = spInfo->species();
 			if (!sp->attachedAtomListsGenerated())
 			{
 				Messenger::print("Performing one-time generation of attached atom lists for intramolecular terms in Species '%s'...\n", sp->name());
 				if (sp->nAtoms() > 500) Messenger::warn("'%s' is a large molecule - this might take a while! Consider using a different evolution module.\n", sp->name());
-				sp->generateAttachedAtomLists();
+
+				// Need to get non-const pointer from Dissolve's CoreData
+				Species* nonConstSp = dissolve.findSpecies(sp->name());
+				nonConstSp->generateAttachedAtomLists();
 			}
 		}
 

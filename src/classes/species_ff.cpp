@@ -63,5 +63,11 @@ bool Species::applyForcefieldTerms(CoreData& coreData)
 	if (!forcefield_->assignAtomTypes(this, coreData, false)) return false;
 	if (!forcefield_->assignIntramolecular(this, true, true)) return false;
 
+	// Update used atom types list
+	updateUsedAtomTypes();
+
+	// Update isotopologues
+	updateIsotopologues();
+
 	return true;
 }

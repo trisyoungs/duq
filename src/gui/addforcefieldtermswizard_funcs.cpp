@@ -110,7 +110,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
 		// Copy AtomType
-		dissolve.copyAtomType(modifiedI, i);
+		dissolve.copyAtomType(modifiedI, targetSpecies_, i);
 
 		// Overwrite existing parameters?
 		if (ui_.AtomTypesOverwriteParametersCheck->isChecked())

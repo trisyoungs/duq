@@ -346,7 +346,8 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				break;
 			case (Species::EndSpeciesKeyword):
 				if (forcefield_) applyForcefieldTerms(coreData);
-				naturalIsotopologue_.update();
+				updateUsedAtomTypes();
+				updateIsotopologues();
 				Messenger::print("Found end of Species '%s'.\n", name());
 				blockDone = true;
 				break;

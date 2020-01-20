@@ -83,7 +83,7 @@ int Configuration::nUsedAtomTypes() const
 }
 
 // Add Species to list of those used by the Configuration, setting/adding the population specified
-SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
+SpeciesInfo* Configuration::addUsedSpecies(const Species* sp, int population)
 {
 	// Check if we have an existing info for this Species
 	SpeciesInfo* spInfo = usedSpeciesInfo(sp);
@@ -100,7 +100,7 @@ SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
 }
 
 // Return SpeciesInfo for specified Species
-SpeciesInfo* Configuration::usedSpeciesInfo(Species* sp)
+SpeciesInfo* Configuration::usedSpeciesInfo(const Species* sp)
 {
 	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return spInfo;
 
@@ -114,7 +114,7 @@ List<SpeciesInfo>& Configuration::usedSpecies()
 }
 
 // Return if the specified Species is present in the usedSpecies list
-bool Configuration::hasUsedSpecies(Species* sp)
+bool Configuration::hasUsedSpecies(const Species* sp)
 {
 	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return true;
 
@@ -156,7 +156,7 @@ void Configuration::incrementContentsVersion()
 }
 
 // Add Molecule to Configuration based on the supplied Species
-Molecule* Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinates)
+Molecule* Configuration::addMolecule(const Species* sp, CoordinateSet* sourceCoordinates)
 {
 	// Create the new Molecule object and set its Species pointer
 	Molecule* newMolecule = molecules_.add();

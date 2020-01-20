@@ -101,17 +101,18 @@ double SpeciesAtom::charge() const
 }
 
 // Set AtomType of SpeciesAtom
-void SpeciesAtom::setAtomType(AtomType* at)
+bool SpeciesAtom::setAtomType(AtomType* at)
 {
 	// Check elements
 	if (at && (at->element() != element_))
 	{
 		Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n", at->name(), element_->symbol(), at->element()->symbol());
-		return;
+		return false;
 	}
 
 	atomType_ = at;
-	if (parent_) parent_->bumpAtomTypesVersion();
+
+	return true;
 }
 
 // Return SpeciesAtomType of SpeciesAtom

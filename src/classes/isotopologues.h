@@ -47,7 +47,7 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	 */
 	private:
 	// Associated Species
-	Species* species_;
+	const Species* species_;
 	// Integer population of associated Species
 	int speciesPopulation_;
 	// Weighted Isotopologue mixture
@@ -55,9 +55,9 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 
 	public:
 	// Set associated Species and population
-	void setSpecies(Species* sp, int population);
+	void setSpecies(const Species* sp, int population);
 	// Return associated Species
-	Species* species() const;
+	const Species* species() const;
 	// Return associated Species population
 	int speciesPopulation() const;
 	// Update Isotopologue RefList

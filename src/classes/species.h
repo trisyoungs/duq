@@ -132,14 +132,16 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
-	// Bump AtomTypes version
-	void bumpAtomTypesVersion();
+	// Set atom type for specified atom
+	bool setAtomType(SpeciesAtom* i, AtomType* at);
+	// Update used AtomTypes list
+	void updateUsedAtomTypes();
 	// Update and return used AtomTypesList
-	const AtomTypeList& usedAtomTypes();
+	const AtomTypeList& usedAtomTypes() const;
 	// Clear AtomType assignments for all atoms
 	void clearAtomTypes();
 	// Return total charge of species from local atomic charges
-	double totalChargeOnAtoms();
+	double totalChargeOnAtoms() const;
 
 
 	/*
@@ -278,8 +280,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	List<Isotopologue> isotopologues_;
 
 	public:
-	// Update natural Isotopologues
-	void updateNaturalIsotopologues();
+	// Update current Isotopologues
+	void updateIsotopologues();
 	// Update and return natural isotopologue
 	const Isotopologue* naturalIsotopologue() const;
 	// Add a new Isotopologue to this Species

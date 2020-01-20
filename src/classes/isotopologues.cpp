@@ -43,14 +43,14 @@ Isotopologues::~Isotopologues()
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(Species* sp, int population)
+void Isotopologues::setSpecies(const Species* sp, int population)
 {
 	species_ = sp;
 	speciesPopulation_ = population;
 }
 
 // Return associated Species
-Species* Isotopologues::species() const
+const Species* Isotopologues::species() const
 {
 	return species_;
 }

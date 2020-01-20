@@ -93,7 +93,7 @@ void IsotopologueCollection::remove(Configuration* cfg)
 }
 
 // Remove the Species from the specified set
-void IsotopologueCollection::remove(IsotopologueSet* set, Species* sp)
+void IsotopologueCollection::remove(IsotopologueSet* set, const Species* sp)
 {
 	set->remove(sp);
 
@@ -109,7 +109,7 @@ void IsotopologueCollection::remove(IsotopologueSet* set, IsotopologueWeight* is
 }
 
 // Remove any occurrences of the specified Species from the collection
-void IsotopologueCollection::remove(Species* sp)
+void IsotopologueCollection::remove(const Species* sp)
 {
 	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) set->remove(sp);
 

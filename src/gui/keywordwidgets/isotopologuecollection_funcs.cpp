@@ -124,7 +124,7 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
 		Isotopologues* topes = VariantPointer<Isotopologues>(item->data(1, Qt::UserRole));
 		if (!topes) return;
 
-		Species* sp = topes->species();
+		const Species* sp = topes->species();
 
 		// Natural first
 		if (!topes->contains(sp->naturalIsotopologue())) set->add(sp->naturalIsotopologue(), 1.0);
@@ -151,7 +151,7 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
 		IsotopologueWeight* isoWeight = VariantPointer<IsotopologueWeight>(item->data(1, Qt::UserRole));
 		if (!isoWeight) return;
 
-		Species* sp = isoWeight->isotopologue()->parent();
+		const Species* sp = isoWeight->isotopologue()->parent();
 
 		Isotopologues* topes = set->isotopologues(sp);
 

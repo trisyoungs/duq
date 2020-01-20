@@ -194,7 +194,7 @@ SpeciesAtom* Species::selectedAtom(int n)
 }
 
 // Return total charge of species from local atomic charges
-double Species::totalChargeOnAtoms()
+double Species::totalChargeOnAtoms() const
 {
 	double totalQ = 0.0;
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) totalQ += i->charge();
@@ -227,23 +227,30 @@ double Species::mass() const
 	return m;
 }
 
-// Bump AtomTypes version
-void Species::bumpAtomTypesVersion()
+// Set atom type for specified atom
+bool Species::setAtomType(SpeciesAtom* i, AtomType* at)
 {
-	++atomTypesVersion_;
+#ifdef CHECKS
+	if (!atoms_.contains(i)) return Messenger::error("SpeciesAtom provided doesn't belong to this Species, so refusing to set its AtomType.\n");
+#endif
+	if (!i->setAtomType(at)) return false;
+
+	updateUsedAtomTypes();
+	updateIsotopologues();
+
+	return true;
+}
+
+// Update used AtomTypes list
+void Species::updateUsedAtomTypes()
+{
+	usedAtomTypes_.clear();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) if (i->atomType()) usedAtomTypes_.add(i->atomType(), 1);
 }
 
 // Return used AtomTypesList
-const AtomTypeList& Species::usedAtomTypes()
+const AtomTypeList& Species::usedAtomTypes() const
 {
-	if (usedAtomTypesPoint_ != atomTypesVersion_)
-	{
-		usedAtomTypes_.clear();
-		for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) if (i->atomType()) usedAtomTypes_.add(i->atomType(), 1);
-	
-		usedAtomTypesPoint_ = atomTypesVersion_;
-	}
-
 	return usedAtomTypes_;
 }
 

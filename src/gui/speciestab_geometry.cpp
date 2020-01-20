@@ -346,7 +346,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 				atomType = dissolve_.addAtomType(speciesAtom->element());
 				atomType->setName(qPrintable(w->text()));
 			}
-			speciesAtom->setAtomType(atomType);
+			species_->setAtomType(speciesAtom, atomType);
 			dissolveWindow_->setModified();
 			break;
 		// Coordinates

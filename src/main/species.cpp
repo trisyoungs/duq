@@ -70,7 +70,7 @@ Species* Dissolve::findSpecies(const char* name) const
 }
 
 // Copy AtomType, creating a new one if necessary
-void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
+void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, Species* destParent, SpeciesAtom* destAtom)
 {
 	// Check for no AtomType being set
 	if (!sourceAtom->atomType())
@@ -89,7 +89,9 @@ void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom
 		at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
 	}
 
-	destAtom->setAtomType(at);
+	// Use the parent Species function to set the AtomType so we update any dependent information
+	if (destParent) destParent->setAtomType(destAtom, at);
+	else destAtom->setAtomType(at);
 }
 
 // Copy intramolecular interaction parameters, adding MasterIntra if necessary
@@ -172,7 +174,7 @@ Species* Dissolve::copySpecies(const Species* species)
 		SpeciesAtom* newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
 
 		// Search for the existing atom's AtomType by name, and create it if it doesn't exist
-		copyAtomType(i, newAtom);
+		copyAtomType(i, newSpecies, newAtom);
 	}
 
 	// Duplicate bonds

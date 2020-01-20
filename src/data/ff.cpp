@@ -260,6 +260,10 @@ bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExist
 		}
 	}
 
+	// Update used atom types list and isotopologues
+	sp->updateUsedAtomTypes();
+	sp->updateIsotopologues();
+
 	return true;
 }
 

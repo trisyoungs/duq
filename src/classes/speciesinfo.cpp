@@ -39,13 +39,13 @@ SpeciesInfo::~SpeciesInfo()
  */
 
 // Set target Species
-void SpeciesInfo::setSpecies(Species* sp)
+void SpeciesInfo::setSpecies(const Species* sp)
 {
 	species_ = sp;
 }
 
 // Return target Species
-Species* SpeciesInfo::species()
+const Species* SpeciesInfo::species() const
 {
 	return species_;
 }

@@ -96,7 +96,7 @@ void IsotopologueSet::add(const Isotopologue* iso, double relativeWeight)
 }
 
 // Remove specified Species from the list (if it exists)
-void IsotopologueSet::remove(Species* sp)
+void IsotopologueSet::remove(const Species* sp)
 {
 	Isotopologues* topes = isotopologues(sp);
 	if (topes) isotopologues_.remove(topes);

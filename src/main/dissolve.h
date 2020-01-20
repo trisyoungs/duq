@@ -118,7 +118,7 @@ class Dissolve
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
 	// Copy AtomType, creating a new one if necessary
-	void copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	void copyAtomType(const SpeciesAtom* sourceAtom, Species* destParent, SpeciesAtom* destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
 	void copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
 	// Copy Species

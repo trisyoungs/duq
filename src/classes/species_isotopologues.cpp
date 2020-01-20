@@ -24,8 +24,10 @@
 #include <string.h>
 
 // Update current Isotopologues
-void Species::updateNaturalIsotopologues()
+void Species::updateIsotopologues()
 {
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update();
+
 	naturalIsotopologue_.update();
 }
 

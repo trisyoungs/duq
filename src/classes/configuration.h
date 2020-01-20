@@ -133,13 +133,13 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes() const;
 	// Add Species to list of those used by the Configuration, setting/adding the population specified
-	SpeciesInfo* addUsedSpecies(Species* sp, int population);
+	SpeciesInfo* addUsedSpecies(const Species* sp, int population);
 	// Return SpeciesInfo for specified Species
-	SpeciesInfo* usedSpeciesInfo(Species* sp);
+	SpeciesInfo* usedSpeciesInfo(const Species* sp);
 	// Return list of SpeciesInfo for the Configuration
 	List<SpeciesInfo>& usedSpecies();
 	// Return if the specified Species is present in the usedSpecies list
-	bool hasUsedSpecies(Species* sp);
+	bool hasUsedSpecies(const Species* sp);
 	// Return the atomic density of the Configuration
 	double atomicDensity() const;
 	// Return the chemical density (g/cm3) of the Configuration
@@ -149,7 +149,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Increment version of current contents
 	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
-	Molecule* addMolecule(Species* sp, CoordinateSet* sourceCoordinates = NULL);
+	Molecule* addMolecule(const Species* sp, CoordinateSet* sourceCoordinates = NULL);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return array of Molecules

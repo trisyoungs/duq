@@ -114,7 +114,7 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 			{
 				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
 
-				Species* sp = spInfo->species();
+				const Species* sp = spInfo->species();
 				summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
 			}
 			else

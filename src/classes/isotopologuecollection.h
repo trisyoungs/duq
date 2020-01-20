@@ -65,11 +65,11 @@ class IsotopologueCollection : public GenericItemBase
 	// Remove the Configuration from the collection
 	void remove(Configuration* cfg);
 	// Remove the Species from the specified set
-	void remove(IsotopologueSet* set, Species* sp);
+	void remove(IsotopologueSet* set, const Species* sp);
 	// Remove the IsotopologueWeight from the specified set
 	void remove(IsotopologueSet* set, IsotopologueWeight* isoWeight);
 	// Remove any occurrences of the specified Species from the collection
-	void remove(Species* sp);
+	void remove(const Species* sp);
 	// Remove any occurrences of the specified Isotopologue from the collection
 	void remove(Isotopologue* iso);
 	// Return defined sets

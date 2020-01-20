@@ -76,7 +76,7 @@ void Weights::clear()
 }
 
 // Add Isotopologue for Species
-bool Weights::addIsotopologue(Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation)
+bool Weights::addIsotopologue(const Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
 	Isotopologues* mix = hasIsotopologues(sp);
@@ -97,7 +97,7 @@ bool Weights::addIsotopologue(Species* sp, int speciesPopulation, const Isotopol
 }
 
 // Return whether the IsotopologueSet contains a mixtures definition for the provided Species
-Isotopologues* Weights::hasIsotopologues(Species* sp) const
+Isotopologues* Weights::hasIsotopologues(const Species* sp) const
 {
 	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next()) if (topes->species() == sp) return topes;
 	return NULL;
@@ -183,7 +183,7 @@ void Weights::calculateWeightingMatrices()
 		double speciesWeight = double(topes->speciesPopulation());
 
 		// Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-		Species* sp = topes->species();
+		const Species* sp = topes->species();
 		const AtomTypeList& speciesAtomTypes = sp->usedAtomTypes();
 		const int nAtoms = sp->nAtoms();
 		intraFlag = false;
