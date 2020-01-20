@@ -30,6 +30,7 @@ SET(keywordwidgets_MOC_HDRS
 
   bool.hui
   charstring.hui
+  configuration.hui
   double.hui
   dropwidget.hui
   enumoptions.hui
@@ -77,6 +78,7 @@ SET(keywordwidgets_SRCS
   bool_funcs.cpp
   broadeningfunction_funcs.cpp
   charstring_funcs.cpp
+  configuration_funcs.cpp
   dialog_funcs.cpp
   double_funcs.cpp
   dropdown_funcs.cpp

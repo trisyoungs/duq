@@ -5,6 +5,7 @@ add_library(keywords
   bool.cpp
   broadeningfunction.cpp
   charstring.cpp
+  configuration.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
@@ -47,6 +48,7 @@ add_library(keywords
   bool.h
   broadeningfunction.h
   charstring.h
+  configuration.h
   data.h
   data1dstore.h
   data2dstore.h
