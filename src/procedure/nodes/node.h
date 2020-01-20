@@ -48,6 +48,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 		AddSpeciesNode,
 		BoxNode,
 		BEGIN_CalculateNodes, CalculateAngleNode, CalculateAxisAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode, END_CalculateNodes,
+		CopyConfigurationNode,
 		DynamicSiteNode,
 		ExcludeNode,
 		Fit1DNode,

@@ -41,6 +41,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::Collect1DNode,			"Collect1D") <<
 		EnumOption(ProcedureNode::Collect2DNode,			"Collect2D") <<
 		EnumOption(ProcedureNode::Collect3DNode,			"Collect3D") <<
+		EnumOption(ProcedureNode::CopyConfigurationNode,		"CopyConfiguration") <<
 		EnumOption(ProcedureNode::DynamicSiteNode,			"DynamicSite") <<
 		EnumOption(ProcedureNode::ExcludeNode,				"Exclude") <<
 		EnumOption(ProcedureNode::Fit1DNode,				"Fit1D") <<

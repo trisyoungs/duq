@@ -9,6 +9,7 @@ add_library(procedurenodes
   collect1d.cpp
   collect2d.cpp
   collect3d.cpp
+  copyconfiguration.cpp
   dynamicsite.cpp
   exclude.cpp
   fit1d.cpp
@@ -42,6 +43,7 @@ add_library(procedurenodes
   collect1d.h
   collect2d.h
   collect3d.h
+  copyconfiguration.h
   dynamicsite.h
   exclude.h
   fit1d.h
