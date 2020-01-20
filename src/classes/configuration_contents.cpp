@@ -173,6 +173,22 @@ Molecule* Configuration::addMolecule(const Species* sp, CoordinateSet* sourceCoo
 	return newMolecule;
 }
 
+// Add Molecule to Configuration, copying the one provided
+Molecule* Configuration::addMolecule(const Molecule* mol)
+{
+	// Create the new Molecule object and set its Species pointer
+	Molecule* newMolecule = molecules_.add();
+	newMolecule->setSpecies(mol->species());
+
+	// Update the relevant SpeciesInfo population
+	addUsedSpecies(mol->species(), 1);
+
+	// Copy atoms from existing molecule
+	for (int n=0; n<mol->nAtoms(); ++n) addAtom(mol->atom(n)->speciesAtom(), newMolecule, mol->atom(n)->r());
+
+	return newMolecule;
+}
+
 // Return number of Molecules in Configuration
 int Configuration::nMolecules() const
 {

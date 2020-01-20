@@ -150,6 +150,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
 	Molecule* addMolecule(const Species* sp, CoordinateSet* sourceCoordinates = NULL);
+	// Add Molecule to Configuration, copying the one provided
+	Molecule* addMolecule(const Molecule* mol);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return array of Molecules
