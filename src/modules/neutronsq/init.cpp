@@ -2,6 +2,7 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "keywords/types.h"
+#include "math/averaging.h"
 #include "modules/neutronsq/neutronsq.h"
 
 // Return enum option info for NormalisationType
@@ -30,6 +31,12 @@ void NeutronSQModule::initialise()
                   "Broadening function to apply when calculating S(Q)");
     keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply when Fourier-transforming g(r) to S(Q)");
+    keywords_.add("Calculation", new IntegerKeyword(1, 1), "Averaging",
+                  "Number of historical partial sets to combine into final partials", "<5>");
+    keywords_.add(
+        "Calculation",
+        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
+        "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 
     // Neutron Isotopes
     keywords_.add("Neutron Isotopes", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable",

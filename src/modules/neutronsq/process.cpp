@@ -9,6 +9,7 @@
 #include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "modules/bragg/bragg.h"
@@ -144,6 +145,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
+    const auto averaging = keywords_.asInt("Averaging");
+    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
+    auto &intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
     const bool includeBragg = keywords_.asBool("IncludeBragg");
     const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
     auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
@@ -160,6 +164,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n",
                      qMin, qMax, qDelta);
+    if (averaging <= 1)
+        Messenger::print("NeutronSQ: No averaging of partials will be performed.\n");
+    else
+        Messenger::print("NeutronSQ: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
+                         Averaging::averagingSchemes().keyword(averagingScheme));
     if (windowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("NeutronSQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -337,6 +346,27 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Re-form the total function
             unweightedsq.formTotal(true);
+        }
+
+        // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+        if (averaging > 1)
+        {
+            // Store the current fingerprint, since we must ensure we retain it in the averaged T.
+            std::string currentFingerprint{unweightedsq.fingerprint()};
+
+            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", "", averaging, averagingScheme);
+
+            // Need to rename data within the contributing datasets to avoid clashes with the averaged data
+            for (int n = averaging; n > 0; --n)
+            {
+                if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n)))
+                    continue;
+                auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n));
+                p.setObjectTags(fmt::format("{}//UnweightedSQ", cfg->niceName()), fmt::format("Avg{}", n));
+            }
+
+            // Re-set the object names and fingerprints of the partials
+            unweightedsq.setFingerprint(currentFingerprint);
         }
 
         // Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source
