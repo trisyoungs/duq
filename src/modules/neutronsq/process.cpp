@@ -228,7 +228,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
+        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName(),
                                                                     GenericItem::InRestartFileFlag, &created);
         if (created)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
@@ -354,7 +354,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{unweightedsq.fingerprint()};
 
-            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", "", averaging, averagingScheme);
+            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", uniqueName(), averaging, averagingScheme);
 
             // Need to rename data within the contributing datasets to avoid clashes with the averaged data
             for (int n = averaging; n > 0; --n)
@@ -362,7 +362,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n)))
                     continue;
                 auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n));
-                p.setObjectTags(fmt::format("{}//UnweightedSQ", cfg->niceName()), fmt::format("Avg{}", n));
+                p.setObjectTags(fmt::format("{}//{}//UnweightedSQ", cfg->niceName(), uniqueName()), fmt::format("Avg{}", n));
             }
 
             // Re-set the object names and fingerprints of the partials
@@ -371,7 +371,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source
         // unweighted g(r)
-        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
+        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName(), "UnweightedSQ"));
         unweightedsq.setFingerprint(fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
                                                 includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
 
@@ -426,7 +426,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weights.print();
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "",
+        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName(),
                                                                   GenericItem::InRestartFileFlag, &created);
         if (created)
             weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",

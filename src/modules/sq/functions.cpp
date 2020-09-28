@@ -93,7 +93,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericLis
         Messenger::print("Weight for Configuration '{}' is {} (total weight is now {}).\n", cfg->name(), weight, totalWeight);
 
         // Grab partials for Configuration and add into our set
-        if (!cfg->moduleData().contains("UnweightedSQ"))
+        if (!cfg->moduleData().contains("UnweightedSQ", module->uniqueName()))
             return Messenger::error("Couldn't find UnweightedSQ data for Configuration '{}'.\n", cfg->name());
         auto cfgPartialSQ = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ");
         summedUnweightedSQ.addPartials(cfgPartialSQ, weight);

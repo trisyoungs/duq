@@ -70,7 +70,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Does a PartialSet already exist for this Configuration?
         bool wasCreated;
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
+        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName(),
                                                                     GenericItem::InRestartFileFlag, &wasCreated);
         if (wasCreated)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
@@ -94,15 +94,15 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{unweightedsq.fingerprint()};
 
-            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", "", averaging, averagingScheme);
+            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", uniqueName(), averaging, averagingScheme);
 
             // Need to rename data within the contributing datasets to avoid clashes with the averaged data
             for (int n = averaging; n > 0; --n)
             {
-                if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n)))
+                if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName()))
                     continue;
                 auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n));
-                p.setObjectTags(fmt::format("{}//UnweightedSQ", cfg->niceName()), fmt::format("Avg{}", n));
+                p.setObjectTags(fmt::format("{}//{}//UnweightedSQ", cfg->niceName(), uniqueName()), fmt::format("Avg{}", n));
             }
 
             // Re-set the object names and fingerprints of the partials
@@ -110,7 +110,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Set names of resources (Data1D) within the PartialSet
-        unweightedsq.setObjectTags(fmt::format("{}//{}", cfg->niceName(), "UnweightedSQ"));
+        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName(), "UnweightedSQ"));
         unweightedsq.setFingerprint(fmt::format("{}", cfg->moduleData().version("UnweightedGR")));
 
         // Save data if requested
