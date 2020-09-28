@@ -5,6 +5,7 @@
 #include "classes/configuration.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 
@@ -21,6 +22,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
+    const auto averaging = keywords_.asInt("Averaging");
+    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
     const auto qDelta = keywords_.asDouble("QDelta");
     const auto qMin = keywords_.asDouble("QMin");
@@ -33,6 +36,11 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin,
                      qMax, qDelta);
+    if (averaging <= 1)
+        Messenger::print("SQ: No averaging of partials will be performed.\n");
+    else
+        Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
+                         Averaging::averagingSchemes().keyword(averagingScheme));
     if (windowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -62,7 +70,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Does a PartialSet already exist for this Configuration?
         bool wasCreated;
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "SQ",
+        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
                                                                     GenericItem::InRestartFileFlag, &wasCreated);
         if (wasCreated)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
@@ -80,8 +88,29 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                    windowFunction, qBroadening))
             return false;
 
+        // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+        if (averaging > 1)
+        {
+            // Store the current fingerprint, since we must ensure we retain it in the averaged T.
+            std::string currentFingerprint{unweightedsq.fingerprint()};
+
+            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", "", averaging, averagingScheme);
+
+            // Need to rename data within the contributing datasets to avoid clashes with the averaged data
+            for (int n = averaging; n > 0; --n)
+            {
+                if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n)))
+                    continue;
+                auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n));
+                p.setObjectTags(fmt::format("{}//UnweightedSQ", cfg->niceName()), fmt::format("Avg{}", n));
+            }
+
+            // Re-set the object names and fingerprints of the partials
+            unweightedsq.setFingerprint(currentFingerprint);
+        }
+
         // Set names of resources (Data1D) within the PartialSet
-        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "SQ", "UnweightedSQ"));
+        unweightedsq.setObjectTags(fmt::format("{}//{}", cfg->niceName(), "UnweightedSQ"));
         unweightedsq.setFingerprint(fmt::format("{}", cfg->moduleData().version("UnweightedGR")));
 
         // Save data if requested
