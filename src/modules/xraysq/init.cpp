@@ -20,6 +20,7 @@
 */
 
 #include "keywords/types.h"
+#include "math/averaging.h"
 #include "modules/xraysq/xraysq.h"
 
 // Return enum option info for NormalisationType
@@ -56,6 +57,12 @@ void XRaySQModule::initialise()
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
     keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply when Fourier-transforming g(r) to S(Q)");
+    keywords_.add("Calculation", new IntegerKeyword(1, 1), "Averaging",
+                  "Number of historical partial sets to combine into final partials", "<5>");
+    keywords_.add(
+        "Calculation",
+        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
+        "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 
     // Bragg Scattering
     keywords_.add("Bragg Scattering", new BoolKeyword(false), "IncludeBragg",

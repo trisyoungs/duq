@@ -27,6 +27,7 @@
 #include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "modules/bragg/bragg.h"
@@ -135,6 +136,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
+    const auto averaging = keywords_.asInt("Averaging");
+    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const bool includeBragg = keywords_.asBool("IncludeBragg");
     const BroadeningFunction &braggQBroadening =
         keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
@@ -157,6 +160,11 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print(
         "XRaySQ: Calculating S(Q)/F(Q) over {:.4e} < Q < {:.4e} Angstroms**-1 using step size of {:.4e} Angstroms**-1.\n", qMin,
         qMax, qDelta);
+    if (averaging <= 1)
+        Messenger::print("XRaySQ: No averaging of partials will be performed.\n");
+    else
+        Messenger::print("XRaySQ: Partials will be averaged over {} sets (scheme = {}).\n", averaging,
+                         Averaging::averagingSchemes().keyword(averagingScheme));
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
     if (normalisation == XRaySQModule::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
@@ -217,7 +225,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const PartialSet &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
+        PartialSet &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName(),
                                                                           GenericItem::InRestartFileFlag, &created);
         if (created)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
@@ -336,9 +344,31 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             unweightedsq.formTotal(true);
         }
 
+        // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+        if (averaging > 1)
+        {
+            // Store the current fingerprint, since we must ensure we retain it in the averaged T.
+            std::string currentFingerprint{unweightedsq.fingerprint()};
+
+            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", uniqueName(), averaging, averagingScheme);
+
+            // Need to rename data within the contributing datasets to avoid clashes with the averaged data
+            for (int n = averaging; n > 0; --n)
+            {
+                if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n)))
+                    continue;
+                auto &p =
+                    GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n), uniqueName());
+                p.setObjectTags(fmt::format("{}//UnweightedSQ", cfg->niceName()), fmt::format("Avg{}", n));
+            }
+
+            // Re-set the object names and fingerprints of the partials
+            unweightedsq.setFingerprint(currentFingerprint);
+        }
+
         // Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source unweighted
         // g(r)
-        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "XRaySQ", "UnweightedSQ"));
+        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName(), "UnweightedSQ"));
         unweightedsq.setFingerprint(fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
                                                 includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
 
@@ -358,7 +388,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weights.print();
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "",
+        PartialSet &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName(),
                                                                         GenericItem::InRestartFileFlag, &created);
         if (created)
             weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",
