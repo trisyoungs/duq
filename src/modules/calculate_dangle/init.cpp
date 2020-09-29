@@ -92,9 +92,8 @@ void CalculateDAngleModule::initialise()
      *     OperateEquationNormalise
      *       Equation  value/sin(y)
      *     EndOperateEquationNormalise
-     *     OperateNormalise
-     *       Value  1.0
-     *     EndOperateNormalise
+     *     OperateSphericalShellNormalise
+     *     EndOperateSphericalShellNormalise
      *   EndNormalistaion
      *   LabelValue  'g(r)'
      *   LabelX  'r, Angstroms'
@@ -178,7 +177,7 @@ void CalculateDAngleModule::initialise()
     processDAngle_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *dAngleNormalisation = processDAngle_->addNormalisationBranch();
     dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
-    dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
+    dAngleNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processDAngle_);
 
     /*

@@ -66,9 +66,8 @@ void CalculateAxisAngleModule::initialise()
      *     OperateEquationNormalise
      *       Equation  value/sin(y)
      *     EndOperateEquationNormalise
-     *     OperateNormalise
-     *       Value  1.0
-     *     EndOperateNormalise
+     *     OperateSphericalShellNormalise
+     *     EndOperateSphericalShellNormalise
      *   EndNormalistaion
      *   LabelValue  'g(r)'
      *   LabelX  'r, Angstroms'
@@ -134,7 +133,7 @@ void CalculateAxisAngleModule::initialise()
     processAngle_->setKeyword<std::string>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *angleNormalisation = processAngle_->addNormalisationBranch();
     angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
-    angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
+    angleNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
     analyser_.addRootSequenceNode(processAngle_);
 
     // Process2D: 'DAngle'
