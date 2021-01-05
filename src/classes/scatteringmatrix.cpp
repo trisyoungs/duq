@@ -3,6 +3,8 @@
 
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
+#include "classes/atomtypedata.h"
+#include "classes/isotopedata.h"
 #include "classes/neutronweights.h"
 #include "classes/xrayweights.h"
 #include "math/interpolator.h"
@@ -342,22 +344,21 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    const auto nUsedTypes = dataWeights.nUsedTypes();
-    const auto &usedTypes = dataWeights.atomTypes();
-    for (auto n = 0; n < nUsedTypes; ++n)
-    {
-        for (auto m = n; m < nUsedTypes; ++m)
-        {
-            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
-            if (colIndex == -1)
-                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
-                                        "('{}' and/or '{}').\n",
-                                        usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+    for_each_pair_early(dataWeights.atomTypes().begin(), dataWeights.atomTypes().end(),
+                        [&](int n, auto &atd1, int m, auto &atd2) -> EarlyReturn<bool> {
+                            // Get the column index of the atom type pair in our matrix
+                            auto colIndex = pairIndex(atd1.atomType(), atd2.atomType());
+                            if (colIndex == -1)
+                                return Messenger::error(
+                                    "Weights associated to reference data contain one or more unknown AtomTypes "
+                                    "('{}' and/or '{}').\n",
+                                    atd1.atomTypeName(), atd2.atomTypeName());
 
-            // Now have the local column index of the AtomType pair in our matrix A_...
-            A_[{rowIndex, colIndex}] = dataWeights.weight(n, m) * factor;
-        }
-    }
+                            // Can now set the scattering weight of the atom type pair
+                            A_[{rowIndex, colIndex}] = dataWeights.weight(atd1.atomType(), atd2.atomType()) * factor;
+
+                            return EarlyReturn<bool>::Continue;
+                        });
 
     // Add reference data and apply the associated factor
     data_.add(weightedData);
@@ -381,23 +382,22 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    const auto nUsedTypes = dataWeights.nUsedTypes();
-    const auto &usedTypes = dataWeights.atomTypes();
-    for (int n = 0; n < nUsedTypes; ++n)
-    {
-        for (int m = n; m < nUsedTypes; ++m)
-        {
-            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
-            if (colIndex == -1)
-                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
-                                        "('{}' and/or '{}').\n",
-                                        usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+    for_each_pair_early(dataWeights.atomTypes().begin(), dataWeights.atomTypes().end(),
+                        [&](int n, auto &atd1, int m, auto &atd2) -> EarlyReturn<bool> {
+                            auto colIndex = pairIndex(atd1.atomType(), atd2.atomType());
+                            if (colIndex == -1)
+                                return Messenger::error(
+                                    "Weights associated to reference data contain one or more unknown AtomTypes "
+                                    "('{}' and/or '{}').\n",
+                                    atd1.atomTypeName(), atd2.atomTypeName());
 
-            // Now have the local column index of the AtomType pair in our matrix A_.
-            // Since this is X-ray data, we will just store the product of the concentrtion weights and the factor
-            A_[{rowIndex, colIndex}] = dataWeights.preFactor(n, m) * factor;
-        }
-    }
+                            // Now have the local column index of the AtomType pair in our matrix A_.
+                            // Since this is X-ray data, we will just store the product of the concentration weights and the
+                            // factor
+                            A_[{rowIndex, colIndex}] = dataWeights.preFactor(atd1.atomType(), atd2.atomType()) * factor;
+
+                            return EarlyReturn<bool>::Continue;
+                        });
 
     // Add reference data and apply the associated factor
     data_.add(weightedData);

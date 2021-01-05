@@ -124,7 +124,6 @@ int XRayWeights::nUsedTypes() const { return atomTypes_.nItems(); }
 // Print atomtype information
 void XRayWeights::print() const
 {
-    // Print atomtypes table
     Messenger::print("\n");
     atomTypes_.print();
 }
@@ -154,53 +153,75 @@ void XRayWeights::setUpMatrices()
                   });
 }
 
-// Return concentration product for type i
+// Return concentration for type i
 double XRayWeights::concentration(int typeIndexI) const { return concentrations_[typeIndexI]; }
 
 // Return concentration product for types i and j
-double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
+double XRayWeights::concentrationProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
 {
-    return concentrationProducts_[{typeIndexI, typeIndexJ}];
+    return concentrationProducts_[atomTypes_.indexOf(i, j)];
 }
 
 // Return pre-factor for types i and j
-double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_[{typeIndexI, typeIndexJ}]; }
+double XRayWeights::preFactor(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
+{
+    return preFactors_[atomTypes_.indexOf(i, j)];
+}
+
+// Return form factor product for types i and j at specified Q value
+double XRayWeights::formFactorProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j, double Q) const
+{
+    auto idI = atomTypes_.indexOf(i);
+    assert((idI >= 0) && (idI < formFactorData_.size()));
+
+    auto idJ = atomTypes_.indexOf(j);
+    assert((idJ >= 0) && (idJ < formFactorData_.size()));
+
+    return formFactorData_[idI].get().magnitude(Q) * formFactorData_[idJ].get().magnitude(Q);
+}
 
 // Return form factor for type i over supplied Q values
-std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<double> &Q) const
+std::vector<double> XRayWeights::formFactor(std::shared_ptr<AtomType> i, const std::vector<double> &Q) const
 {
     // Initialise results array
     std::vector<double> fiq(Q.size());
 
-    auto &fi = formFactorData_[typeIndexI].get();
+    // Get index of atom type
+    auto id = atomTypes_.indexOf(i);
+    assert((id >= 0) && (id < formFactorData_.size()));
 
+    auto &fi = formFactorData_[id].get();
     for (auto n = 0; n < Q.size(); ++n)
         fiq[n] = fi.magnitude(Q[n]);
 
     return fiq;
 }
 
-// Return form factor product for types i and j at specified Q value
-double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const
-{
-    return formFactorData_[typeIndexI].get().magnitude(Q) * formFactorData_[typeIndexJ].get().magnitude(Q);
-}
-
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
+double XRayWeights::weight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j, double Q) const
 {
-    return preFactors_[{typeIndexI, typeIndexJ}] * formFactorProduct(typeIndexI, typeIndexJ, Q);
+    std::pair<int, int> index{atomTypes_.indexOf(i), atomTypes_.indexOf(j)};
+    assert((index.first >= 0) && (index.first < formFactorData_.size()));
+    assert((index.second >= 0) && (index.second < formFactorData_.size()));
+
+    return preFactors_[index] * formFactorData_[index.first].get().magnitude(Q) *
+           formFactorData_[index.second].get().magnitude(Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const
+std::vector<double> XRayWeights::weight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j,
+                                        const std::vector<double> &Q) const
 {
     // Initialise results array
     std::vector<double> fijq(Q.size());
 
-    auto &fi = formFactorData_[typeIndexI].get();
-    auto &fj = formFactorData_[typeIndexJ].get();
-    auto preFactor = preFactors_[{typeIndexI, typeIndexJ}];
+    std::pair<int, int> index{atomTypes_.indexOf(i), atomTypes_.indexOf(j)};
+    assert((index.first >= 0) && (index.first < formFactorData_.size()));
+    assert((index.second >= 0) && (index.second < formFactorData_.size()));
+
+    const auto &fi = formFactorData_[index.first].get();
+    const auto &fj = formFactorData_[index.second].get();
+    const auto &preFactor = preFactors_[index];
 
     std::transform(Q.begin(), Q.end(), fijq.begin(),
                    [preFactor, &fi, &fj](auto q) { return fi.magnitude(q) * fj.magnitude(q) * preFactor; });

@@ -299,16 +299,28 @@ const AtomTypeList &NeutronWeights::atomTypes() const { return atomTypes_; }
 int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }
 
 // Return concentration product for types i and j
-double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }
+double NeutronWeights::concentrationProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
+{
+    return concentrationProducts_[atomTypes_.indexOf(i, j)];
+}
 
 // Return bound coherent scattering product for types i
-double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_[{i, j}]; }
+double NeutronWeights::boundCoherentProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
+{
+    return boundCoherentProducts_[atomTypes_.indexOf(i, j)];
+}
 
 // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-double NeutronWeights::weight(int i, int j) const { return weights_[{i, j}]; }
+double NeutronWeights::weight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
+{
+    return weights_[atomTypes_.indexOf(i, j)];
+}
 
 // Return full intramolecular weighting for types i and j
-double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_[{i, j}]; }
+double NeutronWeights::intramolecularWeight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
+{
+    return intramolecularWeights_[atomTypes_.indexOf(i, j)];
+}
 
 // Return full weights matrix
 const Array2D<double> &NeutronWeights::weights() const { return weights_; }

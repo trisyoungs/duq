@@ -74,13 +74,13 @@ class NeutronWeights : public GenericItemBase
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Return concentration product for types i and j
-    double concentrationProduct(int i, int j) const;
+    double concentrationProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return bound coherent scattering product for types i and j
-    double boundCoherentProduct(int i, int j) const;
+    double boundCoherentProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-    double weight(int i, int j) const;
+    double weight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return full intramolecular weighting for types i and j
-    double intramolecularWeight(int i, int j) const;
+    double intramolecularWeight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return full scattering weights matrix
     const Array2D<double> &weights() const;
     // Return full intramolecular scattering weights matrix

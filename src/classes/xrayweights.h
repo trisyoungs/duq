@@ -74,20 +74,20 @@ class XRayWeights : public GenericItemBase
     void setUpMatrices();
 
     public:
-    // Return concentration product for type i
+    // Return concentration for type i
     double concentration(int typeIndexI) const;
     // Return concentration product for types i and j
-    double concentrationProduct(int typeIndexI, int typeIndexJ) const;
+    double concentrationProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return pre-factor for types i and j
-    double preFactor(int typeIndexI, int typeIndexJ) const;
+    double preFactor(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return form factor product for types i and j at specified Q value
-    double formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const;
+    double formFactorProduct(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j, double Q) const;
     // Return form factor for type i over supplied Q values
-    std::vector<double> formFactor(int typeIndexI, const std::vector<double> &Q) const;
+    std::vector<double> formFactor(std::shared_ptr<AtomType> i, const std::vector<double> &Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-    double weight(int typeIndexI, int typeIndexJ, double Q) const;
+    double weight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j, double Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-    std::vector<double> weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const;
+    std::vector<double> weight(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j, const std::vector<double> &Q) const;
     // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
     double boundCoherentSquareOfAverage(double Q) const;
     // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values

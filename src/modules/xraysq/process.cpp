@@ -190,14 +190,14 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         auto result = for_each_pair_early(
             unweightedSQ.atomTypes().begin(), unweightedSQ.atomTypes().end(),
-            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
+            [&](int i, auto &atd1, int j, auto &atd2) -> EarlyReturn<bool> {
                 if (i == j)
                 {
                     if (procPool.isMaster())
                     {
                         Data1D atomicData = unweightedSQ.partial(i, i);
-                        atomicData.values() = weights.formFactor(i, atomicData.xAxis());
-                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), at1.atomTypeName()));
+                        atomicData.values() = weights.formFactor(atd1.atomType(), atomicData.xAxis());
+                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), atd1.atomTypeName()));
                         if (!exportFormat.exportData(atomicData))
                             return procPool.decideFalse();
                         procPool.decideTrue();
@@ -209,9 +209,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (procPool.isMaster())
                 {
                     Data1D ffData = unweightedSQ.partial(i, j);
-                    ffData.values() = weights.weight(i, j, ffData.xAxis());
+                    ffData.values() = weights.weight(atd1.atomType(), atd2.atomType(), ffData.xAxis());
                     Data1DExportFileFormat exportFormat(
-                        fmt::format("{}-{}-{}.form", uniqueName(), at1.atomTypeName(), at2.atomTypeName()));
+                        fmt::format("{}-{}-{}.form", uniqueName(), atd1.atomTypeName(), atd2.atomTypeName()));
                     if (!exportFormat.exportData(ffData))
                         return procPool.decideFalse();
                     procPool.decideTrue();
