@@ -185,17 +185,26 @@ std::vector<AtomTypeData>::const_iterator AtomTypeList::begin() const { return t
 std::vector<AtomTypeData>::const_iterator AtomTypeList::end() const { return types_.end(); }
 
 // Return index of AtomType in list
-int AtomTypeList::indexOf(std::shared_ptr<AtomType> atomtype) const
+int AtomTypeList::indexOf(std::shared_ptr<AtomType> i) const
 {
     auto count = 0;
     for (auto &atd : types_)
     {
-        if (atd.atomType() == atomtype)
+        if (atd.atomType() == i)
             return count;
         ++count;
     }
 
     return -1;
+}
+
+// Return indices of AtomType pair in list
+std::tuple<int, int> AtomTypeList::indexOf(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const
+{
+    std::tuple<int, int> ab{indexOf(i), indexOf(j)};
+    assert(std::get<0>(ab) != -1);
+    assert(std::get<1>(ab) != -1);
+    return ab;
 }
 
 // Return index of names AtomType in list

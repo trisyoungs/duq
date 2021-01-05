@@ -63,7 +63,9 @@ class AtomTypeList : public GenericItemBase
     // Return opening iterator
     std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType in list
-    int indexOf(std::shared_ptr<AtomType> atomtype) const;
+    int indexOf(std::shared_ptr<AtomType> i) const;
+    // Return indices of AtomType pair in list
+    std::tuple<int, int> indexOf(std::shared_ptr<AtomType> i, std::shared_ptr<AtomType> j) const;
     // Return index of names AtomType in list
     int indexOf(std::string_view name) const;
     // Return total population of all types in list
