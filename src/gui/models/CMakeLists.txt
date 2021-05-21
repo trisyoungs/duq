@@ -3,6 +3,7 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     dataManagerReferencePointModel.h
     dataManagerSimulationModel.h
+    masterTermTreeModel.h
     procedureNodeModel.h
     speciesFilterProxy.h
     speciesModel.h
@@ -26,6 +27,7 @@ set(models_SRCS
     braggReflectionModel.cpp
     dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
+    masterTermTreeModel.cpp
     procedureNodeModel.cpp
     speciesFilterProxy.cpp
     speciesModel.cpp
