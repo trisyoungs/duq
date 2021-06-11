@@ -144,6 +144,26 @@ void Box::scale(double factor)
 }
 
 /*
+ * Minimum Image Routines
+ */
+
+// Return normalised vector between from 'i' to 'j'
+Vec3<double> Box::minimumVectorN(const Atom &i, const Atom &j) const
+{
+    auto v = minimumVector(i, j);
+    v.normalise();
+    return v;
+}
+
+// Return normalised vector between from 'i' to 'j'
+Vec3<double> Box::minimumVectorN(const Vec3<double> &i, const Vec3<double> &j) const
+{
+    auto v = minimumVector(i, j);
+    v.normalise();
+    return v;
+}
+
+/*
  * Utility Routines
  */
 
