@@ -668,6 +668,3 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
 
 // Return periodic box
 const Box *Species::box() const { return box_.get(); }
-
-// Return CellArray
-const CellArray &Species::cells() const { return cellArray_; }

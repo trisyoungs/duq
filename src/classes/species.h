@@ -228,14 +228,10 @@ class Species
     private:
     // Periodic Box
     std::unique_ptr<Box> box_;
-    // Cell array for Box
-    CellArray cellArray_;
 
     public:
     // Return periodic box
     const Box *box() const;
-    // Return CellArray
-    const CellArray &cells() const;
 
     /*
      * Source Forcefield (if any)
