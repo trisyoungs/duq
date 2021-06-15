@@ -87,7 +87,7 @@ class Box
     void scale(double factor);
 
     /*
-     * Minimum Image Routines (Pure Virtual)
+     * Minimum Image Routines
      */
     public:
     // Return minimum image coordinates of 'i' with respect to 'ref'
@@ -104,6 +104,10 @@ class Box
     virtual Vec3<double> minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const = 0;
     // Return minimum image vector from 'i' to 'j'
     virtual Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const = 0;
+    // Return normalised vector from 'i' to 'j'
+    Vec3<double> minimumVectorN(const Atom &i, const Atom &j) const;
+    // Return normalised vector from 'i' to 'j'
+    Vec3<double> minimumVectorN(const Vec3<double> &i, const Vec3<double> &j) const;
     // Return minimum image distance from 'i' to 'j'
     virtual double minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const = 0;
     // Return minimum image distance from 'i' to 'j' (references)
