@@ -44,6 +44,7 @@ endif(MULTI_THREADING)
 
 # Add local Modules dir to cmake search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
 
 # Find ANTLR4 Java
 include(FindANTLR)
@@ -91,10 +92,8 @@ if(GUI)
   # Add extra functions
   include(FindFTGL)
 
-  find_package(Qt5Widgets 5.10 REQUIRED)
-  find_package(Qt5Core 5.10 REQUIRED)
-  find_package(Qt5Gui 5.10 REQUIRED)
   find_package(OpenGL REQUIRED)
+  find_package(Qt6 REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
 
@@ -227,14 +226,7 @@ if(GUI)
 
   # Set project-local include directories for target
   target_include_directories(
-    ${gui_target_name}
-    PRIVATE ${PROJECT_SOURCE_DIR}/src
-            ${PROJECT_BINARY_DIR}/src
-            ${FREETYPE_INCLUDE_DIRS}
-            ${Qt5Core_INCLUDE_DIRS}
-            ${Qt5Gui_INCLUDE_DIRS}
-            ${Qt5OpenGL_INCLUDE_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
+    ${gui_target_name} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${FREETYPE_INCLUDE_DIRS} Qt6::OpenGL Qt6::OpenGLWidgets
   )
 
 endif(GUI)
@@ -333,10 +325,10 @@ if(GUI)
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
             antlr4-runtime
-            Qt5::Widgets
-            Qt5::Core
+            Qt6::Widgets
+            Qt6::Core
+            OpenGL::GL
             ${FTGL_LIBRARIES}
-            ${OPENGL_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
