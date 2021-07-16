@@ -204,7 +204,7 @@ std::shared_ptr<Atom> Configuration::atom(int n)
 // Scale contents of the box by the specified factors along each axis
 void Configuration::scaleContents(Vec3<double> scaleFactors)
 {
-    Vec3<double> oldCog, newCog, newPos;
+    Vec3<double> r, cog;
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
@@ -212,22 +212,27 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
         {
             for (auto &i : mol->atoms())
             {
-                auto r = i->r();
-                box()->frac
-                i->setCoordinates(i->r().x * scaleFactors.x, i->r().y * scaleFac);
+                r = i->r();
+                box()->toFractional(r);
+                r.multiply(scaleFactors);
+                box()->toReal(r);
+                i->setCoordinates(r);
             }
         }
         else
         {
             // First, work out the centre of geometry of the Molecule, and fold it into the Box
-            oldCog = box()->fold(mol->centreOfGeometry(box()));
+            cog = box()->fold(mol->centreOfGeometry(box()));
 
-            // Scale centre of geometry by supplied factor
-            newCog = oldCog * factor;
+            // Scale centre of geometry along axes by supplied factors
+            r = cog;
+            box()->toFractional(r);
+            r.multiply(scaleFactors);
+            box()->toReal(r);
 
             // Loop over Atoms in Molecule, setting new coordinates as we go
             for (auto &i : mol->atoms())
-                i->setCoordinates(newCog + box()->minimumVector(i->r(), oldCog));
+                i->setCoordinates(r + box()->minimumVector(i->r(), cog));
         }
     }
 }

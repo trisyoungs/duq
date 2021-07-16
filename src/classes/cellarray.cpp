@@ -494,8 +494,8 @@ void CellArray::clear() { cells_.clear(); }
  * Operations
  */
 
-// Scale Cells by supplied factor
-void CellArray::scale(double factor)
+// Scale Cells by supplied factors along each axis
+void CellArray::scale(Vec3<double> scaleFactors)
 {
     realCellSize_ *= factor;
     axes_ *= factor;

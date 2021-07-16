@@ -167,8 +167,8 @@ class Configuration
     void createBox(const Matrix3 axes);
     // Return Box
     const Box *box() const;
-    // Scale Box (and associated Cells) by specified factor
-    void scaleBox(double factor);
+    // Scale Box lengths (and associated Cells) by specified factors
+    void scaleBox(Vec3<double> scaleFactors);
     // Set requested size factor for Box
     void setRequestedSizeFactor(double factor);
     // Return requested size factor for Box
