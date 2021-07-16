@@ -142,8 +142,8 @@ class Configuration
     const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return nth Atom
     std::shared_ptr<Atom> atom(int n);
-    // Scale contents of the box by the specified factor
-    void scaleContents(double factor);
+    // Scale contents of the box by the specified factors along each axis
+    void scaleContents(Vec3<double> scaleFactors);
 
     /*
      * Periodic Box and Cells

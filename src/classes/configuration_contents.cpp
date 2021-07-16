@@ -201,8 +201,8 @@ std::shared_ptr<Atom> Configuration::atom(int n)
     return atoms_[n];
 }
 
-// Scale contents of the box by the specified factor
-void Configuration::scaleContents(double factor)
+// Scale contents of the box by the specified factors along each axis
+void Configuration::scaleContents(Vec3<double> scaleFactors)
 {
     Vec3<double> oldCog, newCog, newPos;
     for (auto &mol : molecules_)
@@ -211,7 +211,11 @@ void Configuration::scaleContents(double factor)
         if (mol->species()->box()->type() != Box::BoxType::NonPeriodic)
         {
             for (auto &i : mol->atoms())
-                i->setCoordinates(i->r() * factor);
+            {
+                auto r = i->r();
+                box()->frac
+                i->setCoordinates(i->r().x * scaleFactors.x, i->r().y * scaleFac);
+            }
         }
         else
         {
