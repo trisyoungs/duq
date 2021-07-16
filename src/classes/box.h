@@ -173,7 +173,7 @@ class Box
     // Return folded fractional coordinate (i.e. inside current Box)
     Vec3<double> foldFrac(const Vec3<double> &r) const;
     // Determine axis scale factors to give requested volume, with scaling ratios provided
-    Vec3<double> scaleFactors(double requestedVolume, Vec3<double> scaleRatios = {1.0, 1.0, 1.0});
+    Vec3<double> scaleFactors(double requestedVolume, Vec3<double> scaleRatios = {1.0, 1.0, 1.0}) const;
 };
 
 // Non-Periodic Box Definition
