@@ -361,3 +361,35 @@ Vec3<double> Box::foldFrac(const Vec3<double> &r) const
 
     return frac;
 }
+
+// Determine axis scale factors to give requested volume, with scaling ratios provided
+Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<double> scaleRatios)
+{
+    // Determine non-zero scale factors and root power
+    Vec3<int> baseFactor(1, 1, 1);
+    if (fabs(scaleRatios.x) < 1.0e-5)
+        baseFactor.x = 0;
+    if (fabs(scaleRatios.y) < 1.0e-5)
+        baseFactor.y = 0;
+    if (fabs(scaleRatios.z) < 1.0e-5)
+        baseFactor.z = 0;
+    auto rootPower = 1.0 / (baseFactor.x + baseFactor.y + baseFactor.z);
+
+    // Add 1.0 to scale ratios to get initial scaling factors f
+    auto f = scaleRatios + 1.0;
+
+    // Calculate volume from scaling axes by input factors
+    auto scaledVolume = axes_.determinant() * f.x * f.y * f.z;
+    auto ratio = pow((requestedVolume / scaledVolume), rootPower);
+
+    // Multiply scaling factors by our ratio r, and reset any factors that were initially zero back to 1.0
+    f *= ratio;
+    if (baseFactor.x == 0)
+        f.x = 1.0;
+    if (baseFactor.y == 0)
+        f.y = 1.0;
+    if (baseFactor.z == 0)
+        f.z = 1.0;
+
+    return f;
+}
