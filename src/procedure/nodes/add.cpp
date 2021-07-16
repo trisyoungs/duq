@@ -22,6 +22,9 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
                   new EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>(boxActionStyles() =
                                                                                AddProcedureNode::BoxActionStyle::AddVolume),
                   "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
+    keywords_.add("Control", new Vec3NodeValueKeyword(this, {1.0, 1.0, 1.0}, Vec3Labels::ABCLabels), "ScaleRatios",
+                  "Relative scale factors to use when expanding box");
+
     keywords_.add("Control",
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
@@ -109,6 +112,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
     double density = densityAndUnits.value().asDouble();
     auto boxAction = keywords_.enumeration<AddProcedureNode::BoxActionStyle>("BoxAction");
+    auto scaleRatios = keywords_.asVec3Double("ScaleRatios");
     if (boxAction == AddProcedureNode::BoxActionStyle::None)
         Messenger::print("[Add] Current box geometry / volume will remain as-is.\n");
     else if (boxAction == AddProcedureNode::BoxActionStyle::AddVolume)

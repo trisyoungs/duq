@@ -39,4 +39,5 @@ When adding molecules of the target species to the current configuration, there 
 |`Positioning`|[`PositioningType`]({{< ref "positioningtype" >}})|`Random`|Positioning type for individual molecules.|
 |`Region`|`name`|--|Region node controlling the location of inserted species into the configuration.|
 |`Rotate`|`true|false`|`true`|Whether to randomly rotate molecules on insertion.|
+|`ScaleRatios`|`sx`<br/>`sy`<br/>`sz`|`1.0`<br/>`1.0`<br/>`1.0`|Relative factors to use when scaling box lengths to accommodate new species. The default values of (1,1,1) give equal scaling in all directions. To restrict scaling to a single axis (e.g. the y-axis) set values of (0,1,0).|
 |`Species`|`name`|--|{{< required-label >}} Target species to add.|
