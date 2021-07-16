@@ -140,16 +140,16 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
             Messenger::print("[Add] Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n",
                              requiredVolume);
 
-        auto scaleFactor = pow(requiredVolume / currentVolume, 1.0 / 3.0);
+        auto scaleFactors = cfg->box()->scaleFactors(requiredVolume, scaleRatios);
 
         // Scale existing contents
-        cfg->scaleContents(scaleFactor);
+        cfg->scaleContents(scaleFactors);
 
         // Scale the current Box so there is enough space for our new species
-        cfg->scaleBox(scaleFactor);
+        cfg->scaleBox(scaleFactors);
 
-        Messenger::print("[Add] New box volume is {:e} cubic Angstroms (scale factor was {}).\n", cfg->box()->volume(),
-                         scaleFactor);
+        Messenger::print("[Add] New box volume is {:e} cubic Angstroms (scale factors were {}, {}, {}).\n",
+                         cfg->box()->volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
     }
     else if (boxAction == AddProcedureNode::BoxActionStyle::ScaleVolume)
     {
